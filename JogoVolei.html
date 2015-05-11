@@ -1,0 +1,406 @@
+<DOCTYPE HTML>
+<html>
+<head>
+
+	<link rel="stylesheet" href="css/style.css">
+
+	<script type="text/javascript" >
+				//Imagens Carregadas
+				var imageObj = new Image();
+				var imageObjJogadorE = new Image();
+				var imageObjJogadorR = new Image();
+				var bola = new Image();
+
+				//Posição Inicial dos Players 
+				var paddleX = 10;
+				var paddleY = 250;
+				var paddleXE = 780;
+				var paddleYE = 260;
+				
+				//Tamanho do canvas
+				var boardX = 900;
+				var boardY = 500;
+				var paddleW = 550;
+				var paddleH = 280;
+
+				//Variáveis de Interação Players 
+				var flagPulo = false;
+				var flagPuloPlayerE = false;
+				var flagAndarLeft = false;
+				var flagAndarRight = false;
+				var flagAndarLeftPlayerE = false;
+				var flagAndarRightPlayerE = false;
+				var topo = false;
+				var topoPlayerE = false;
+				var contAnima = 0;
+				var contAnimaE = 0;
+				var contAnimaPulo = 0;
+				var contAnimaPuloE = 0;
+				
+				//Velocidade e Gravidade 
+				var gravidade = 5;
+				var velocidade = 10;
+				
+				//Onload Imagem inicial
+				var imageOnload = 1;
+				var imageOnloadE = 1;
+				
+				//Bola 
+				var ballX = 30;
+				var ballY = 200;
+				
+				var ballDX = 5;
+				var ballDY = 2.3;
+				
+				var topoBola = 50;
+				var bolaEixoX = 2;
+				
+				var ballColision = false;
+				var ballColision2 = false;
+				var ballTopo = false;
+				
+				var largura_JogadorE = 60;
+				var altura_JogadorE = 100;
+				
+				var largura_JogadorR = 70;
+				var Altura_JogadorR = 120;
+				
+				var largura_Bola = 40;
+				var altura_Bola = 40;
+				
+
+				
+			function areaCanvas () {
+
+				// body...Canvas 		
+				canvas = document.getElementById("myCanvas");				
+				canvas = canvas.getContext("2d");
+				
+				// Source Image
+				imageObj.src = "Imagens/volei.png";
+				imageObjJogadorE.src = "Imagens/e"+imageOnloadE+".png";
+				imageObjJogadorR.src = "Imagens/r"+imageOnload+".png";
+				bola.src = "Imagens/bola.png"
+				
+				
+				
+				//Draw Image myCanvas
+				imageObj.onload = function(){
+					// body...					
+					canvas.drawImage(imageObj,0,0);
+					canvas.drawImage(imageObjJogadorE,paddleXE,paddleYE, largura_JogadorE, altura_JogadorE);
+					canvas.drawImage(imageObjJogadorR,paddleX,paddleY,largura_JogadorR, Altura_JogadorR  );
+					canvas.drawImage(bola,ballX,ballY, largura_Bola,altura_Bola );
+
+				}
+				
+				//Eventos
+				gameLoop = setInterval(movimentPlayer, 24);
+				window.addEventListener('keydown', whatKeyDown, true);
+				window.addEventListener('keyup', whatKeyUp, true);
+
+				//Eventos de movimentos Players
+				function movimentPlayer () {
+
+					//Troca Imagens dos players 
+					imageObjJogadorR.src ="";
+					imageObjJogadorR.src = "Imagens/r"+imageOnload+".png";
+					imageObjJogadorE.src ="";
+					imageObjJogadorE.src = "Imagens/e"+imageOnloadE+".png";
+					imageObj.onload();
+					
+					/* =====================Player 1======================= */
+					if (flagPulo ==  true) {
+
+						contAnimaPulo ++;
+						imageOnload = 2;
+						if (paddleY == 180 ) {
+							
+							topo = true;
+
+						} else if ( paddleY == 250 ){
+
+							topo = false;
+							flagPulo = false;
+							imageOnload = 1;
+						}
+
+						if (topo == false){
+								
+	         	 			paddleY =  paddleY - gravidade;
+
+	          			} else {
+
+	          				paddleY = paddleY + gravidade;
+	          			} 
+
+					};					
+					
+					// Troca Imgagem em movimento //
+					if((flagAndarRight == true || flagAndarLeft == true) && flagPulo == false){					
+						contAnima++;							
+						if ( contAnima == 3 ){
+							if (imageOnload < 7) imageOnload = imageOnload + 1; 
+							else imageOnload = 1;
+							contAnima = 1;
+						}					
+					
+					}
+					
+					// Anima //
+					if(flagAndarLeft == true){
+					
+						paddleX = paddleX - velocidade;								
+							
+					}
+					
+					if(flagAndarRight == true){
+					
+						paddleX = paddleX + velocidade;
+						
+					}
+					
+					// Limita espaço player 1 //	
+					if (paddleX <= 0){
+						flagAndarLeft = false; 
+						paddleX = 0;
+					}
+
+					if (paddleX >= boardX - paddleW){
+						 flagAndarRight = false;
+						 paddleX = boardX - paddleW;
+					}
+					
+
+					if (flagAndarLeft == false && flagAndarRight == false) {
+						imageOnload = 1;
+					}
+
+					/* =====================Player 2======================= */
+					if (flagPuloPlayerE ==  true) {
+
+						contAnimaPuloE ++;
+						imageOnloadE = 2;
+						if (paddleYE == 180 ) {
+							
+							topoPlayerE = true;
+
+						} else if ( paddleYE == 260 ){
+
+							topoPlayerE = false;
+							flagPuloPlayerE = false;
+							imageOnloadE = 1;
+						}
+						
+						// Anima //
+						if (topoPlayerE == false){
+								
+	         	 			paddleYE =  paddleYE - gravidade;
+
+	          			} else {
+
+	          				paddleYE = paddleYE + gravidade;
+	          			} 
+
+					};
+				
+					// Troca Imgagem em movimento //
+					if((flagAndarRightPlayerE == true || flagAndarLeftPlayerE == true) && flagPuloPlayerE == false){					
+						
+						contAnimaE++;							
+						if ( contAnimaE == 3 ){
+							if (imageOnloadE < 7) imageOnloadE = imageOnloadE + 1; 
+							else imageOnloadE = 1;
+							contAnimaE = 1;
+						}					
+					
+					}
+					
+					// Anima //
+					if(flagAndarLeftPlayerE == true){
+					
+						paddleXE = paddleXE - velocidade;								
+							
+					}
+					
+					if(flagAndarRightPlayerE == true){
+					
+						paddleXE = paddleXE + velocidade;
+						
+					}				
+						
+					// Limita espaço player 2 //
+					if (paddleXE < 480){
+						
+						flagAndarLeftPlayerE = false; 
+						paddleXE = 480;
+					}
+
+					if (paddleXE > 840 ){
+						
+						 flagAndarRightPlayerE = false;
+						 paddleXE = 840;
+					}
+					
+
+					if (flagAndarLeftPlayerE == false && flagAndarRightPlayerE == false) {
+						imageOnloadE = 1;
+					}
+					
+
+				
+					if(ballColision == true){					
+						
+						if(ballTopo == true){
+						
+							ballX += ballDX;
+							ballY += ballDY;
+
+							
+						}else{
+						
+							ballX += ballDX;
+							ballY -= ballDY;
+						
+						}		
+						
+						
+					}else if(ballColision2 == true){
+					
+						if(ballTopo == true){
+						
+							ballX -= ballDX;
+							ballY += ballDY;
+							
+						}else{
+						
+							ballX -= ballDX;
+							ballY -= ballDY;
+						
+						}	
+						
+					}
+					
+				
+					if(ballY < topoBola){
+						ballTopo = true;
+					}
+					
+					
+					testColision();
+
+				}
+
+				function testColision(){				
+
+
+					if( ( (paddleX  + largura_JogadorR) > ballX && paddleX < (ballX + largura_Bola) ) && 
+						( (paddleY + Altura_JogadorR) > ballY && paddleY < (ballY + altura_Bola) ) )
+					{
+						
+						ballTopo = false;
+						ballColision = true;
+						ballColision2 = false;
+						canvas.clearRect(0, 0, 0, 0); 
+					}else if( ( (paddleXE + largura_JogadorE) > ballX && paddleXE < (ballX + largura_Bola) ) && 
+						( (paddleYE + altura_JogadorE) > ballY && paddleYE < (ballY + altura_Bola) ) ){
+						ballTopo = false;
+						ballColision2 = true;
+						ballColision = false; 
+						canvas.clearRect(0, 0, 0, 0);						
+					}
+					
+				
+				}
+				
+
+			    //Função de Eventos de teclado
+			    function whatKeyDown (evt) { 	
+
+						/* Controle Player 1 */
+						switch (evt.keyCode) {
+
+						// Left arrow.
+						case 37:
+								flagAndarLeft = true;		          			
+						break;
+
+						// Right arrow.
+						case 39:			        		
+								flagAndarRight = true;	          			
+						break;
+						// Pulo
+						case 38:							
+								flagPulo = true; 
+						break;
+
+
+						/* Controle Player 2 */
+						case 65:
+								flagAndarLeftPlayerE = true;		          			
+						break;
+
+						 // Right arrow.
+						case 68:			        		
+								flagAndarRightPlayerE = true;	          			
+						break;
+						// Pulo	
+						case 87:											
+								flagPuloPlayerE = true; 
+						break;
+
+			        }
+			    }
+
+				// Eventos de teclado UP
+			    function whatKeyUp (evt) {
+			    	
+			    	switch(evt.keyCode){
+						/* Controle Player 2 */
+			    		case 37:
+							
+			    			flagAndarLeft = false;
+			    		break;					
+						
+						case 39:
+			    			flagAndarRight = false;
+			    		break;
+
+
+				        /* Controle Player 2 */
+				        case 65:							
+				        	flagAndarLeftPlayerE = false;		          			
+				        break;
+				          
+				        case 68:							
+				        	flagAndarRightPlayerE = false;	          			
+				        break;
+
+			    	}
+			    }				
+
+				
+			};
+
+
+
+	</script>
+</head>		
+
+
+
+	<body onload= "areaCanvas()">
+		<h1 align=center>
+			QUADRA DE VOLEI
+		</h1>
+		
+
+		<div id="test">
+			<canvas align = center id="myCanvas" width="900" height="500"></canvas>
+		</div>
+		
+		
+	</body>
+
+</html>
+

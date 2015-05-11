@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>exemplo colisão</title>
+    </head>
+    <body style="background:#000000;">
+         <canvas id="tela" width="640" height="480">Sem suporte ao HTML5</canvas>
+ 
+         <script>
+            var canvas = document.getElementById("tela");
+            var context = canvas.getContext("2d");
+ 
+            //Dados do quadrado vermelho
+            var x_vermelho = 0;
+            var y_vermelho = 200;
+            var largura_vermelho = 40;
+            var altura_vermelho = 40;
+ 
+            //Dados do quadrado azul
+            var x_azul = 240;
+            var y_azul = 200;
+            var largura_azul = 40;
+            var altura_azul = 40;
+ 
+            var id_interval = window.setInterval('gameloop()', 50); //executa o gameloop a cada 50 milissegundos
+ 
+            function detectarColisao()
+            {
+                if( ( (x_vermelho + largura_vermelho) > x_azul && x_vermelho < (x_azul + largura_azul) ) && 
+                    ( (y_vermelho + altura_vermelho) > y_azul && y_vermelho < (y_azul + altura_azul) ) )
+                {
+                    window.clearInterval(id_interval); //interrompe o game loop parando a movimentação do quadrado vermelho
+                }
+            }
+ 
+            function gameloop()
+            {
+                desenharQuadrado();
+                detectarColisao();
+            }
+ 
+            function desenharQuadrado()
+            {
+                context.clearRect(0, 0, 640, 480); //limpa todo o Canvas
+ 
+                //Definindo a cor vermelha
+                context.fillStyle = "rgb(255,0,0)";
+                context.fillRect(x_vermelho, y_vermelho, largura_vermelho, altura_vermelho); //desenha o quadrado vermelho
+ 
+                //Definindo a cor azul
+                context.fillStyle = "rgb(0,0,255)";
+                context.fillRect(x_azul, y_azul, largura_azul, altura_azul); //desenha o quadrado azul
+ 
+                x_vermelho = x_vermelho + 1; //para movimentar o quadrado vermelho
+            }
+         </script>
+    </body>
+</html>
